@@ -8,41 +8,80 @@
 namespace Mini\Core;
 
 use PDO;
+use Exception;
 
-class Database
-{
-    /** @var PDO */
-    private $dbh;
-    private static $_instance;
-    private function __construct()
-    {
+class Database {
+    private static $instance = null;
+    private $connection;
+    
+    /**
+     * Constructeur privé pour pattern Singleton
+     */
+    private function __construct() {
         // Récupération des données du fichier de config
-        // la fonction parse_ini_file parse le fichier et retourne un array associatif
-        $configData = parse_ini_file(__DIR__ . '/../config.ini');
-
+        $configPath = __DIR__ . '/../Views/config.ini';
+        
+        // Vérifie si le fichier existe
+        if (!file_exists($configPath)) {
+            die("Erreur : Le fichier config.ini est introuvable. Chemin : " . $configPath);
+        }
+        
+        $config = parse_ini_file($configPath, true);
+        
+        if (!$config || !isset($config['database'])) {
+            die("Erreur : Le fichier config.ini est mal configuré.");
+        }
+        
+        $db = $config['database'];
+        
         try {
-            $this->dbh = new PDO(
-                "mysql:host={$configData['DB_HOST']};dbname={$configData['DB_NAME']};charset=utf8",
-                $configData['DB_USERNAME'],
-                $configData['DB_PASSWORD'],
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING) // Affiche les erreurs SQL à l'écran
-            );
-        } catch (\Exception $exception) {
-            echo 'Erreur de connexion...<br>';
-            echo $exception->getMessage() . '<br>';
+            $dsn = "mysql:host={$db['host']};dbname={$db['dbname']};charset={$db['charset']}";
+            $this->connection = new PDO($dsn, $db['username'], $db['password']);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            echo 'Erreur de connexion à la base de données...<br>';
+            echo $e->getMessage() . '<br>';
             echo '<pre>';
-            echo $exception->getTraceAsString();
+            echo $e->getTraceAsString();
             echo '</pre>';
             exit;
         }
     }
-    // the unique method you need to use
-    public static function getPDO()
-    {
-        // If no instance => create one
-        if (empty(self::$_instance)) {
-            self::$_instance = new Database();
+    
+    /**
+     * Récupère l'instance unique de la base de données
+     */
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
-        return self::$_instance->dbh;
+        return self::$instance;
+    }
+    
+    /**
+     * Retourne la connexion PDO
+     */
+    public function getConnection() {
+        return $this->connection;
+    }
+    
+    /**
+     * Méthode statique pour récupérer directement PDO (compatible avec votre ancien code)
+     */
+    public static function getPDO() {
+        return self::getInstance()->getConnection();
+    }
+    
+    /**
+     * Empêche le clonage de l'instance
+     */
+    private function __clone() {}
+    
+    /**
+     * Empêche la désérialisation de l'instance
+     */
+    public function __wakeup() {
+        throw new Exception("Impossible de désérialiser un singleton");
     }
 }
