@@ -67,16 +67,21 @@ class Product
     public static function getLatest(int $limit = 8): array
     {
         $pdo = Database::getPDO();
+        
+        $limit = (int)$limit;
+        
         $stmt = $pdo->prepare("
             SELECT p.*, c.nom as categorie_nom 
             FROM produits p 
             LEFT JOIN categories c ON p.categorie_id = c.id 
             ORDER BY p.created_at DESC 
-            LIMIT ?
+            LIMIT $limit
         ");
-        $stmt->execute([$limit]);
+        
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     
     /**
      * Récupère un produit par son ID

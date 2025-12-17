@@ -11,6 +11,7 @@ $categories = \Mini\Models\Category::getAll();
 // Détermine la page active
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
