@@ -114,12 +114,12 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
             <div class="footer-section">
                 <h3>Contact</h3>
                 <p>📧 contact@mozikako.com</p>
-                <p>📞 01 23 45 67 89</p>
+                <p>📞 06 81 14 92 37</p>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2024 Mozikako - Tous droits réservés</p>
+            <p>&copy; 2026 Mozikako - Tous droits réservés</p>
         </div>
     </footer>
 </body>
