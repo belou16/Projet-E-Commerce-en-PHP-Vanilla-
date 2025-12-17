@@ -10,35 +10,39 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Importe le routeur depuis le noyau
 use Mini\Core\Router;
+use Mini\Controllers\HomeController;
+use Mini\Controllers\ProductController;
+use Mini\Controllers\CartController;
+use Mini\Controllers\OrderController;
 
 // Définit les routes de l'application
 // Format: [méthode HTTP, chemin, [Contrôleur, action]]
 $routes = [
     // Page d'accueil
-    ['GET', '/', [\Mini\Controllers\HomeController::class, 'index']],
+    ['GET', '/', [HomeController::class, 'index']],
     
     // Routes produits
-    ['GET', '/produits', [\Mini\Controllers\ProductController::class, 'list']],
-    ['GET', '/produit', [\Mini\Controllers\ProductController::class, 'detail']],
-    ['GET', '/categorie', [\Mini\Controllers\ProductController::class, 'category']],
+    ['GET', '/produits', [ProductController::class, 'list']],
+    ['GET', '/produit', [ProductController::class, 'detail']],
+    ['GET', '/categorie', [ProductController::class, 'category']],
     
     // Routes authentification
-    ['GET', '/inscription', [\Mini\Controllers\AuthController::class, 'showRegister']],
-    ['POST', '/inscription', [\Mini\Controllers\AuthController::class, 'register']],
-    ['GET', '/connexion', [\Mini\Controllers\AuthController::class, 'showLogin']],
-    ['POST', '/connexion', [\Mini\Controllers\AuthController::class, 'login']],
-    ['GET', '/deconnexion', [\Mini\Controllers\AuthController::class, 'logout']],
+    ['GET', '/inscription', ['Mini\Controllers\AuthController', 'showRegister']],
+    ['POST', '/inscription', ['Mini\Controllers\AuthController', 'register']],
+    ['GET', '/connexion', ['Mini\Controllers\AuthController', 'showLogin']],
+    ['POST', '/connexion', ['Mini\Controllers\AuthController', 'login']],
+    ['GET', '/deconnexion', ['Mini\Controllers\AuthController', 'logout']],
     
     // Routes panier
-    ['GET', '/panier', [\Mini\Controllers\CartController::class, 'show']],
-    ['POST', '/panier/ajouter', [\Mini\Controllers\CartController::class, 'add']],
-    ['POST', '/panier/modifier', [\Mini\Controllers\CartController::class, 'update']],
-    ['POST', '/panier/supprimer', [\Mini\Controllers\CartController::class, 'remove']],
+    ['GET', '/panier', [CartController::class, 'show']],
+    ['POST', '/panier/ajouter', [CartController::class, 'add']],
+    ['POST', '/panier/modifier', [CartController::class, 'update']],
+    ['POST', '/panier/supprimer', [CartController::class, 'remove']],
     
     // Routes commandes
-    ['POST', '/commande/valider', [\Mini\Controllers\OrderController::class, 'create']],
-    ['GET', '/commandes', [\Mini\Controllers\OrderController::class, 'list']],
-    ['GET', '/commande', [\Mini\Controllers\OrderController::class, 'detail']],
+    ['POST', '/commande/valider', [OrderController::class, 'create']],
+    ['GET', '/commandes', [OrderController::class, 'list']],
+    ['GET', '/commande', [OrderController::class, 'detail']],
 ];
 
 // Récupère la méthode HTTP de la requête
